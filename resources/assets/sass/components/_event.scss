@@ -1,0 +1,58 @@
+.events {
+
+	&__heading {
+		font-size: $font-size-base * 1;
+		color: $brand-primary;
+		margin-top: 2em;
+		font-weight: $font-weight-bold;
+	}
+}
+
+.event {
+
+	& + .event {
+		margin-top: $spacer-y;
+		margin-bottom: $spacer-y;
+		padding-top: $spacer-y;
+		border: 0;
+		border-top: $hr-border-width solid $hr-border-color;
+	}
+
+	&__title {
+		font-size: $font-size-base * 1.1;
+		text-transform: uppercase;
+	}
+
+	&__date {
+		font-size: 14px;
+	}
+
+	&__info {
+		float: left;
+	}
+
+	&__tool-bar {
+		float: right;
+		margin-left: 1em;
+
+		a {
+			display: block;
+			float: left;
+			margin: 0 0.5em;
+
+			span {
+				font-size: $font-size-small;
+			}
+
+			&:hover, &:focus, &:active {
+				text-decoration: none;
+			}
+		}
+
+		.fa {
+			display: block;
+			font-size: 30px;
+			text-align: center;
+		}
+	}
+}
