@@ -9,6 +9,10 @@ use App\Event;
 class EventsController extends Controller
 {
 
+    public function __construct() {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $currentEvents = Event::latest()->where('location_id', '=', auth()->user()->location->id)
@@ -53,7 +57,7 @@ class EventsController extends Controller
 
     public function show($id)
     {
-        //
+        return view('admin.events.show');
     }
 
     public function edit($id)
@@ -63,16 +67,25 @@ class EventsController extends Controller
         return view('admin.events.edit', compact('event'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate(request(), [
+                'name' => 'required',
+                'spotify_playlist_id' => 'required',
+                'start' => 'required|date',
+                'end' => 'required|date'
+            ]);
+
+        $event = Event::findOrFail($id);
+
+        $event->update([
+                'name' => request('name'),
+                'spotify_playlist_id' => request('spotify_playlist_id'),
+                'start' => Carbon::createFromFormat('Y-m-d\Th:i', request('start')),
+                'end' => Carbon::createFromFormat('Y-m-d\Th:i', request('end'))
+                ]);
+
+        return redirect('/admin/events');
     }
 
     /**

@@ -24,17 +24,21 @@ Route::get('/', function () {
 });
 
 // REGISTER / CHECK-IN (QR-CODE)
+Route::post('register/{code}', 'AuthController@register');
+
 
 // LOGIN
 
 // USER PROFILE (update, upgrade, etc)
+Route::get('profile', 'GuestsController@show');
 
-// SEARCH
+// SONGS
+Route::post('songs', 'SongsController@store');
 
 // SUGGEST
-Route::resource('suggestion', 'SuggestionsController', ['only' => [
-    'index', 'store', 'show', 'update', 'destroy']]);
+Route::get('suggestions', 'SuggestionsController@index');
+Route::post('suggestions/{song}', 'SuggestionsController@store');
+Route::delete('suggestions/{suggestion}', 'SuggestionsController@destroy');
 
 // VOTE
-Route::resource('vote', 'VotesController', ['only' => [
-    'index', 'store', 'show', 'update', 'destroy']]);
+Route::post('votes/{suggestion}', 'VotesController@toggle');

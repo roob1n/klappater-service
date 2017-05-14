@@ -16,6 +16,7 @@ class CreateSongTable extends Migration {
             $table->string('spotify_song_id')->unique()->nullable()->default(null);
             $table->string('title');
             $table->string('artist');
+            $table->string('img')->nullable()->default(null);
             $table->integer('duration_ms');
             $table->timestamps();
         });

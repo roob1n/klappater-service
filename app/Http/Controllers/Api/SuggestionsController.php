@@ -2,77 +2,80 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Song;
 use App\Suggestion;
+use App\Uahnn\Transformers\SuggestionTransformer;
+use App\Vote;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SuggestionsController extends ApiController {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+    protected $suggestionTransformer;
+
+    public function __construct(SuggestionTransformer $suggestionTransformer) {
+        $this->suggestionTransformer = $suggestionTransformer;
+        $this->middleware('jwt.auth');
+    }
+
     public function index() {
-        $suggestions = Suggestion::all();
+        $guest = JWTAuth::toUser(JWTAuth::getToken());
 
-        return $this->respond($suggestions->all());
+        $suggestions = Suggestion::where('event_id', $guest->events()->first()->id)
+            ->orderBy('vote_count', 'desc')
+            ->get();
+
+        return $this->respond($this->suggestionTransformer->transformCollection($suggestions));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() {
-        //
+    public function store(Song $song) {
+        $guest = JWTAuth::toUser(JWTAuth::getToken());
+
+        // Schauen, dass der Song und der Guest existieren, sonst Fehler ausgeben
+        if (!$song || !$guest) {
+            return $this->respondNotAuthenticated('Guest oder Song mit ID nicht gefunden');
+        }
+
+        // Hat der User noch genügend Credits?
+        if ($guest->suggestion_credit <= 0) {
+            return $this->respondNotAllowed('Guest hat nicht mehr genügend Credits');
+        }
+
+        // Wurde der Song schon vorgeschlagen?
+        $suggestion = Suggestion::where([
+                ['song_id', '=', $song->id],
+                ['status', '=', 'active'],
+                ['event_id', '=', $guest->events()->first()->id]
+            ])->count();
+
+        if ($suggestion > 0) {
+            return $this->respondNotAllowed('Song wurde bereits vorgeschlagen!');
+        }
+
+        // Suggestion anlegen
+        $suggestion = new Suggestion();
+        $suggestion->song()->associate($song);
+        $suggestion->guest()->associate($guest);
+        $suggestion->event()->associate($guest->events()->first());
+        $suggestion->vote_count = 0;
+        $suggestion->life_time = Carbon::now(2)->addMinutes(10);
+        $suggestion->save();
+
+        // User Vote anlegen
+        $vote = new Vote();
+        $vote->guest()->associate($guest);
+        $vote->suggestion()->associate($suggestion);
+        $vote->save();
+
+        $guest->suggestion_credit -= 1;
+        $guest->save();
+
+
+        // suggestion zurückgeben
+        return $this->respond($this->suggestionTransformer->transform($suggestion));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request) {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Suggestion $suggestion
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Suggestion $suggestion) {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Suggestion $suggestion
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Suggestion $suggestion) {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Suggestion $suggestion
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Suggestion $suggestion) {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Suggestion $suggestion
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Suggestion $suggestion) {
         //
     }

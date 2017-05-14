@@ -7,7 +7,7 @@
 
 		<h1>Event bearbeiten</h1>
 
-		<form action="/admin/events" method="POST" accept-charset="utf-8">
+		<form action="/admin/events/{{ $event->id }}" method="POST" accept-charset="utf-8">
 		
 		{{ csrf_field() }}
 
@@ -39,7 +39,8 @@
 		<div class="form-group">
 			<button type="submit" class="btn btn-primary">Event speichern</button>
 
-			<a href="/admin/location" class="btn btn-secondary">Abbrechen</a>
+			<a href="/admin/events" class="btn btn-secondary">Abbrechen</a>
+
 		</div>
 
 	</form>

@@ -35,12 +35,14 @@ class Event extends Model {
     /**
     *   Adds a generated ActivationCode to the event
     */
-    public function addActivationCode() {
+    public function addActivationCodes($number = 1) {
 
-        $this->activation_codes()->create([
-                'code' => ActivationCode::generate(8),
-                'status' => 'valid'
-            ]);
+        for($i = 0; $i < $number; $i++) {
+
+            $this->activation_codes()->create([
+                    'code' => ActivationCode::generate(8),
+                    'status' => 'valid'
+                ]);
+        }
     }
-
 }

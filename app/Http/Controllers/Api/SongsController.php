@@ -3,83 +3,33 @@
 namespace App\Http\Controllers\Api;
 
 use App\Song;
+use App\Uahnn\Transformers\SongTransformer;
 use Illuminate\Http\Request;
 
-class SongsController extends ApiController
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+class SongsController extends ApiController {
+
+    protected $songTransformer;
+
+    public function __construct(SongTransformer $songTransformer) {
+        $this->songTransformer = $songTransformer;
+        $this->middleware('jwt.auth');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+    public function store(Request $request) {
+        $data = $request->json()->all();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $song = Song::firstOrNew(['spotify_song_id' => $data['spotify_song_id']]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Song  $song
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Song $song)
-    {
-        //
-    }
+        if($song->title) {
+            return $this->respond($this->songTransformer->transform($song));
+        }else {
+            $song->artist = $data['artist'];
+            $song->title = $data['title'];
+            $song->img = $data['img_url'];
+            $song->duration_ms = $data['duration_ms'];
+            $song->save();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Song  $song
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Song $song)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Song  $song
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Song $song)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Song  $song
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Song $song)
-    {
-        //
+            return $this->respond($this->songTransformer->transform($song));
+        }
     }
 }
