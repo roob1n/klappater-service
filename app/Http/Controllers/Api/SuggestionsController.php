@@ -20,7 +20,8 @@ class SuggestionsController extends ApiController {
     }
 
     public function index() {
-        $guest = JWTAuth::toUser(JWTAuth::getToken());
+        $token = JWTAuth::getToken();
+        $guest = JWTAuth::toUser($token);
 
         $suggestions = Suggestion::where('event_id', $guest->events()->first()->id)
             ->orderBy('vote_count', 'desc')
@@ -58,7 +59,7 @@ class SuggestionsController extends ApiController {
         $suggestion->song()->associate($song);
         $suggestion->guest()->associate($guest);
         $suggestion->event()->associate($guest->events()->first());
-        $suggestion->vote_count = 0;
+        $suggestion->vote_count = 1;
         $suggestion->life_time = Carbon::now(2)->addMinutes(10);
         $suggestion->save();
 

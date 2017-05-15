@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Event;
@@ -15,6 +16,7 @@ class EventsController extends Controller
 
     public function index()
     {
+        if(auth())
         $currentEvents = Event::latest()->where('location_id', '=', auth()->user()->location->id)
             ->whereDate('end', '>', Carbon::now())
             ->whereDate('start', '<', Carbon::now())
@@ -32,7 +34,9 @@ class EventsController extends Controller
 
     public function create()
     {
-        return view('admin.events.create');
+        $playlists = $this->getSpotifyPlaylists(auth()->user()->location->spotify_token);
+
+        return view('admin.events.create')->with(['playlists' => $playlists]);
     }
 
     public function store(Request $request)
@@ -47,9 +51,9 @@ class EventsController extends Controller
         auth()->user()->location->events()->create([
                 'name' => request('name'),
                 'spotify_playlist_id' => request('spotify_playlist_id'),
-                'next_pick' => Carbon::createFromFormat('Y-m-d\Th:i', request('start')),
-                'start' => Carbon::createFromFormat('Y-m-d\Th:i', request('start')),
-                'end' => Carbon::createFromFormat('Y-m-d\Th:i', request('end'))
+                'next_pick' => Carbon::createFromFormat('Y-m-d\TH:i', request('start')),
+                'start' => Carbon::createFromFormat('Y-m-d\TH:i', request('start')),
+                'end' => Carbon::createFromFormat('Y-m-d\TH:i', request('end'))
             ]);
 
         return redirect('/admin/events');
@@ -97,5 +101,27 @@ class EventsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function getSpotifyPlaylists($token) {
+
+        $client = new Client();
+
+        $res = $client->request('GET', 'https://api.spotify.com/v1/me', [
+            'headers' => [
+                'Authorization' => "Bearer ".$token
+            ],
+        ]);
+
+        $user_name = json_decode($res->getBody()->getContents())->id;
+
+
+        $res = $client->request('GET', 'https://api.spotify.com/v1/users/'.$user_name.'/playlists/', [
+            'headers' => [
+                'Authorization' => "Bearer ".$token
+            ],
+        ]);
+
+        return json_decode($res->getBody()->getContents())->items;
     }
 }

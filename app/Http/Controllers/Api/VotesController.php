@@ -21,7 +21,7 @@ class VotesController extends ApiController {
             return $this->respondNotAuthenticated('Guest oder Suggestion mit ID nicht gefunden');
         }
 
-
+        // Ist die Suggestion vom gleichen Event wie der User
         if($suggestion->event->id != $guest->events()->first()->id) {
             return $this->respondNotAllowed('Guest kann nicht für eine Suggestion eines anderen Events voten!');
         }

@@ -34,7 +34,7 @@
 
 			<h3>Location-Name: {{ $location->name }}</h3>
 
-			<p>Spotify-Account-ID: {{ $location->spotify_account_id}}</p>
+			<p>Spotify Authentifiziert?: {{ $location->spotify_token ? "Ja" : "Nein" }}</p>
 
 			<p>Anzahl Events: {{count($location->events)}}</p>
 

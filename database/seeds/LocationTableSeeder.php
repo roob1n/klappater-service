@@ -17,8 +17,7 @@ class LocationTableSeeder extends Seeder {
 
         foreach (range(1, 5) as $index) {
             Location::create([
-                'name' => $faker->company,
-                'spotify_account_id' => $faker->uuid
+                'name' => $faker->company
             ]);
         }
     }

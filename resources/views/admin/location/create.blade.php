@@ -2,41 +2,46 @@
 
 
 @section('content')
-	
-	<div class="col-sm-8">
 
-		<h1>Location erstellen</h1>
+    <div class="col-sm-8">
 
-		<form action="/admin/location" method="POST" accept-charset="utf-8">
-		
-		{{ csrf_field() }}
+        <h1>Location erstellen</h1>
 
-		@include('layouts.errors')
+        @if($spotify_url)
+            <a class="btn btn-info" href="{{ $spotify_url }}">
+                Spotify Account authentifizieren
+            </a>
+        @endif
 
-		<div class="form-group">
-			<label for="name">Location-Name:</label>
-			<input type="text" class="form-control" name="name" id="name" required="required">
-		</div>
+        <form action="/admin/location" method="POST" accept-charset="utf-8">
 
+            {{ csrf_field() }}
 
-		<div class="form-group">
-			<label for="spotify_account_id">Spotify-Account-ID:</label>
-			<input type="text" class="form-control" name="spotify_account_id" id="spotify_account_id" required="required">
-		</div>
+            @include('layouts.errors')
 
-		<div class="form-group">
-			<button type="submit" class="btn btn-primary">Location erstellen</button>
-		</div>
+            <div class="form-group">
+                <label for="name">Location-Name:</label>
+                <input type="text" class="form-control" name="name" id="name" required="required">
+            </div>
 
-	</form>
+            <div class="form-group">
+                <label for="spotify_token">Spotify Access Token:</label>
+                <input type="text" class="form-control" name="spotify_token" id="spotify_token" readonly="readonly" required="required" value="{{ ($access_token) ? $access_token : "" }}">
+            </div>
 
-	</div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Location erstellen</button>
+            </div>
+
+        </form>
+
+    </div>
 
 @endsection
 
 
 @section('sidebar')
 
-	@include('admin.layouts.sidebar')
+    @include('admin.layouts.sidebar')
 
 @endsection

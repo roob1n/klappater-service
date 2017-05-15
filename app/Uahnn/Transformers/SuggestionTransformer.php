@@ -2,6 +2,8 @@
 
 namespace App\Uahnn\Transformers;
 
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 class SuggestionTransformer extends Transformer {
 
     private $songTransformer;
@@ -15,8 +17,8 @@ class SuggestionTransformer extends Transformer {
         return [
             'id' => $suggestion->id,
             'song' => $this->songTransformer->transform($suggestion->song),
-            'votes' => $suggestion->votes()->count(),
-            'has_user_vote' => ($suggestion->votes()->where('guest_id', $suggestion->guest_id)->count() > 0) ? true : false,
+            'votes' => $suggestion->vote_count,
+            'has_user_vote' => ($suggestion->votes()->where('guest_id', JWTAuth::toUser(JWTAuth::getToken())->id)->count() > 0) ? true : false,
             'suggestor' => $suggestion->guest->nick_name
         ];
     }

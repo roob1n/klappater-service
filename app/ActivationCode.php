@@ -48,8 +48,8 @@ class ActivationCode extends Model {
          Query Scopes
     ====================*/
 
-    public function scopeNextValid($query) {
+    public function scopeValid($query) {
 
-      return $query->where('status', 'valid')->first();
+      return $query->where('status', 'valid');
     }
 }

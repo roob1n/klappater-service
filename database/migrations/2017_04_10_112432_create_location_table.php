@@ -14,7 +14,7 @@ class CreateLocationTable extends Migration {
         Schema::create('locations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('spotify_account_id');
+            $table->mediumText('spotify_token')->nullable()->default(null);
             $table->timestamps();
         });
     }
