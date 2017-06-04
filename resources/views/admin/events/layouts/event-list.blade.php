@@ -14,9 +14,9 @@ Keine Events
 				<h3 class="event__title">{{ $event->name }}</h3>
 				
 				<div class="event__date">
-					<time>{{ $event->start->format('d.m.Y h:i') }}</time>
+					<time>{{ $event->start->format('d.m.Y H:i') }}</time>
 					<span>&nbsp;-&nbsp;</span>
-					<time>{{ $event->end->format('d.m.Y h:i') }}</time>
+					<time>{{ $event->end->format('d.m.Y H:i') }}</time>
 				</div>
 			</div>
 

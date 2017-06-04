@@ -15,6 +15,9 @@ class CreateLocationTable extends Migration {
             $table->increments('id');
             $table->string('name');
             $table->mediumText('spotify_token')->nullable()->default(null);
+            $table->string('refresh_token')->nullable()->default(null);
+            $table->string('expires_in')->nullable()->default(null);
+            $table->string('spotify_user')->nullable()->default(null);
             $table->timestamps();
         });
     }

@@ -26,8 +26,15 @@
 
             <div class="form-group">
                 <label for="spotify_token">Spotify Access Token:</label>
-                <input type="text" class="form-control" name="spotify_token" id="spotify_token" readonly="readonly" required="required" value="{{ ($access_token) ? $access_token : "" }}">
+                <input type="text" class="form-control" name="spotify_token" id="spotify_token" readonly="readonly"
+                       required="required" value="{{ ($access_token) ? $access_token : "" }}">
+
+                @if($access_token)
+                    <input type="hidden" name="expires_in" value="{{ $expires }}" />
+                    <input type="hidden" name="refresh_token" value="{{ $refresh_token }}" />
+                @endif
             </div>
+
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Location erstellen</button>

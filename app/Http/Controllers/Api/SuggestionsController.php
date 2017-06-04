@@ -23,7 +23,9 @@ class SuggestionsController extends ApiController {
         $token = JWTAuth::getToken();
         $guest = JWTAuth::toUser($token);
 
-        $suggestions = Suggestion::where('event_id', $guest->events()->first()->id)
+        $suggestions = Suggestion::where([
+            ['event_id', '=', $guest->events()->first()->id],
+            ['status', '=', 'active']])
             ->orderBy('vote_count', 'desc')
             ->get();
 

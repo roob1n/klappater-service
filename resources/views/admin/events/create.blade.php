@@ -36,13 +36,13 @@
             <div class="form-group">
                 <label for="start">Start:</label>
                 <input class="form-control" type="datetime-local" id="start" name="start"
-                       value="{{ Carbon\Carbon::now()->format('Y-m-d\Th:i') }}" required="required">
+                       value="{{ Carbon\Carbon::now()->format('Y-m-d\TH:i') }}" required="required">
             </div>
 
             <div class="form-group">
                 <label for="end">Ende:</label>
                 <input class="form-control" type="datetime-local" id="end" name="end"
-                       value="{{ Carbon\Carbon::now()->format('Y-m-d\Th:i') }}" required="required">
+                       value="{{ Carbon\Carbon::now()->format('Y-m-d\TH:i') }}" required="required">
             </div>
 
             <div class="form-group">

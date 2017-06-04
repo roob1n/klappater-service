@@ -41,7 +41,7 @@ Route::get('dashboard', function() {
 /*====================
 	   LOCATION
 ====================*/
-Route::get('location/create/{access_token?}', 'LocationsController@create');
+Route::get('location/create', 'LocationsController@create');
 Route::get('location', 'LocationsController@index');
 Route::post('location', 'LocationsController@store');
 Route::get('location/edit', 'LocationsController@edit');

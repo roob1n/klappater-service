@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Location;
+use App\Uahnn\Services\SpotifyService;
 
 class LocationsController extends Controller {
 
-    public function __construct() {
+    protected $spotifyService;
+
+    public function __construct(SpotifyService $spotifyService) {
         $this->middleware('auth');
+        $this->spotifyService = $spotifyService;
     }
 
 
@@ -19,22 +24,22 @@ class LocationsController extends Controller {
     }
 
 
-    public function create($access_token = null) {
+    public function create() {
         if (auth()->user()->location_id) {
             return redirect('admin/location/edit');
         }
 
-        if($access_token) {
+        if($spotify_data = session('spotify_data')) {
+
             return view('admin.location.create')->with([
                 'spotify_url' => false,
-                'access_token' => $access_token
+                'access_token' => $spotify_data['access_token'],
+                'refresh_token' => $spotify_data['refresh_token'],
+                'expires' => $spotify_data['expires']
             ]);
         }else {
-            $url = "http://accounts.spotify.com/authorize/";
-            $url .= "?client_id=".env('SPOTIFY_ID');
-            $url .= "&response_type=code";
-            $url .= "&redirect_uri=".env('SPOTIFY_REDIRECT_URI');
-            $url .= "&scope=playlist-modify-public playlist-read-private playlist-modify-private";
+
+            $url = $this->spotifyService->getAccessUrl();
 
             return view('admin.location.create')->with([
                 'spotify_url' => $url,
@@ -48,10 +53,20 @@ class LocationsController extends Controller {
 
         $this->validate(request(), [
             'name' => 'required',
-            'spotify_token' => 'required'
+            'spotify_token' => 'required',
+            'expires_in' => 'required',
+            'refresh_token' => 'required'
         ]);
 
-        $location = Location::create(request(['name', 'spotify_token']));
+        $user = $this->spotifyService->getUserName(request()->spotify_token);
+
+        $location = Location::create([
+            'name' => request()->name,
+            'spotify_token' => request()->spotify_token,
+            'spotify_user' => $user,
+            'expires_in' => Carbon::now()->addSeconds(request()->expires_in - 120),
+            'refresh_token' => request()->refresh_token
+        ]);
 
         auth()->user()->location()->associate($location);
 
@@ -81,26 +96,9 @@ class LocationsController extends Controller {
     public function callback() {
         // TODO: fehler abfangen
 
-        $access_token = $this->getSpotifyAccessToken(request()->input('code'));
+        $spotify_data = $this->spotifyService->getAccessToken(request()->input('code'));
 
-        return redirect()->action('LocationsController@create', ['access_token' => $access_token]);
+        return redirect()->action('LocationsController@create')->with('spotify_data', $spotify_data);
     }
 
-    private function getSpotifyAccessToken($code) {
-
-        $client = new Client();
-
-        $res = $client->request('POST', 'https://accounts.spotify.com/api/token', [
-            'headers' => [
-                'Authorization' => "Basic ". base64_encode(env('SPOTIFY_ID').":".env('SPOTIFY_SECRET'))
-            ],
-            'form_params' => [
-                'grant_type' => 'authorization_code',
-                'code' => $code,
-                'redirect_uri' => env('SPOTIFY_REDIRECT_URI')
-            ]
-        ]);
-
-        return json_decode($res->getBody()->getContents())->access_token;
-    }
 }
