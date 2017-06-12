@@ -32,9 +32,4 @@ class SongsController extends ApiController {
             return $this->respond($this->songTransformer->transform($song));
         }
     }
-
-    public function options()
-    {
-        return $this->respond("");
-    }
 }

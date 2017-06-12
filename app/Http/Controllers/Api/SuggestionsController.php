@@ -82,9 +82,4 @@ class SuggestionsController extends ApiController {
     public function destroy(Suggestion $suggestion) {
         //
     }
-
-    public function options()
-    {
-        //
-    }
 }
