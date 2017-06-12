@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ApiController;
 use App\ActivationCode as Code;
 use App\Uahnn\Transformers\GuestTransformer;
 use Carbon\Carbon;
+use Firebase\JWT\JWT;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends ApiController {
@@ -39,8 +40,14 @@ class AuthController extends ApiController {
 
         $token = JWTAuth::fromUser($code->guest);
 
+        $spotifyToken = $guest->events()->first()->location->spotify_token;
+
+        $data = $this->guestTransformer->transform($guest);
+
+        $data['spotify_token'] = $spotifyToken;
+
         return $this->respondCreatedWithToken(
-            $this->guestTransformer->transform($guest),
+            $data,
             $token,
             'Neuer Gast erstellt.');
     }

@@ -84,8 +84,8 @@ class EventsController extends Controller {
         $event->update([
             'name' => request('name'),
             'spotify_playlist_id' => request('spotify_playlist_id'),
-            'start' => Carbon::createFromFormat('Y-m-d\Th:i', request('start')),
-            'end' => Carbon::createFromFormat('Y-m-d\Th:i', request('end'))
+            'start' => Carbon::createFromFormat('Y-m-d\TH:i', request('start')),
+            'end' => Carbon::createFromFormat('Y-m-d\TH:i', request('end'))
         ]);
 
         return redirect('/admin/events');

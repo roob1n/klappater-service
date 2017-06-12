@@ -23,17 +23,17 @@
 
 		<div class="form-group">
 			<label for="spotify_playlist_id">Spotify-Playlist-ID:</label>
-			<input type="text" class="form-control" name="spotify_playlist_id" id="spotify_playlist_id" required="required" value="{{ $event->spotify_playlist_id}}">
+			<input type="text" class="form-control" name="spotify_playlist_id" id="spotify_playlist_id" required="required" readonly="readonly" value="{{ $event->spotify_playlist_id}}">
 		</div>
 		
 		<div class="form-group">
 			<label for="start">Start:</label>
-			<input class="form-control" type="datetime-local" id="start" name="start" value="{{ $event->start->format('Y-m-d\Th:i') }}" required="required">
+			<input class="form-control" type="datetime-local" id="start" name="start" value="{{ $event->start->format('Y-m-d\TH:i') }}" required="required">
 		</div>
 
 		<div class="form-group">
 			<label for="end">Ende:</label>
-			<input class="form-control" type="datetime-local" id="end" name="end" value="{{ $event->end->format('Y-m-d\Th:i') }}" required="required">
+			<input class="form-control" type="datetime-local" id="end" name="end" value="{{ $event->end->format('Y-m-d\TH:i') }}" required="required">
 		</div>
 
 		<div class="form-group">

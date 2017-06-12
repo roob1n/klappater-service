@@ -21,7 +21,7 @@ Route::post('register', 'AdminRegisterController@store');
 
 Route::get('login', 'AdminSessionController@create');
 
-Route::post('login', 'AdminSessionController@store');
+Route::post('login', 'AdminSessionController@store')->name('login');
 
 Route::get('logout', 'AdminSessionController@destroy');
 

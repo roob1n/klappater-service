@@ -72,11 +72,11 @@ class SpotifyService {
 
             $new_data = json_decode($response->getBody()->getContents());
 
-            $location->spotify_token = $new_data['access_token'];
-            $location->expires_in = Carbon::now()->addSeconds($new_data['expires_in'] - 120);
+            $location->spotify_token = $new_data->access_token;
+            $location->expires_in = Carbon::now()->addSeconds($new_data->expires_in - 120);
 
-            if(isset($new_data['refresh_token']) && $new_data['refresh_token'] != $location->refresh_token) {
-                $location->refresh_token = $new_data['refresh_token'];
+            if(isset($new_data->refresh_token) && $new_data->refresh_token != $location->refresh_token) {
+                $location->refresh_token = $new_data->refresh_token;
             }
 
             $location->save();

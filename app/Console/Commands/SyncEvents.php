@@ -31,23 +31,30 @@ class SyncEvents extends Command {
         foreach ($events as $event) {
             $most_voted_sugg = $event->suggestions()->where('status', 'active')->orderBy('vote_count', 'desc')->first();
 
-            $most_voted_sugg->status = "chosen";
+            if ($most_voted_sugg) {
 
-            $most_voted_sugg->guest->suggestion_credit += 2;
+                $most_voted_sugg->status = "chosen";
 
-            $this->comment($most_voted_sugg->song->title . " gewünscht von " . $most_voted_sugg->guest->nick_name);
+                $most_voted_sugg->guest->suggestion_credit += 2;
 
-            $event->next_pick->addSeconds(round($most_voted_sugg->song->duration_ms / 1000));
+                $this->comment($most_voted_sugg->song->title . " gewünscht von " . $most_voted_sugg->guest->nick_name);
 
-            $event->save();
-            $most_voted_sugg->save();
-            $most_voted_sugg->guest->save();
+                $event->next_pick->addSeconds(round($most_voted_sugg->song->duration_ms / 1000));
 
-            $this->spotifyService->putSongOnPlaylist(
-                $event->location,
-                $event->spotify_playlist_id,
-                $most_voted_sugg->song->spotify_song_id
-            );
+                $event->save();
+                $most_voted_sugg->save();
+                $most_voted_sugg->guest->save();
+
+                $this->spotifyService->putSongOnPlaylist(
+                    $event->location,
+                    $event->spotify_playlist_id,
+                    $most_voted_sugg->song->spotify_song_id
+                );
+            }else {
+                $this->spotifyService->refreshAccessToken($event->location);
+
+                $this->comment("Es ist ein Fehler aufgetreten: \n".$event->name . " hat keine Suggestions!");
+            }
         }
     }
 }
