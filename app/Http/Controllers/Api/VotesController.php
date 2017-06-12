@@ -56,4 +56,8 @@ class VotesController extends ApiController {
             return $this->respondCreated(null, 'Vote wurde angelegt');
         }
     }
+
+    public function options() {
+        return $this->respond('', ['Access-Control-Allow-Origin' => 'http://app.klappater.uahnn.com']);
+    }
 }

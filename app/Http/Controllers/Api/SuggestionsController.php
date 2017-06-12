@@ -82,4 +82,8 @@ class SuggestionsController extends ApiController {
     public function destroy(Suggestion $suggestion) {
         //
     }
+
+    public function options() {
+        return $this->respond('', ['Access-Control-Allow-Origin' => 'http://app.klappater.uahnn.com']);
+    }
 }
