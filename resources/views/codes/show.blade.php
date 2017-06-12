@@ -30,7 +30,7 @@
 
     <div id="qrcode"></div>
 
-    <a href="{{ $app->make('url')->to('/check-in/'.$code->code) }}">Check-in mit Code {{ $code->code }}</a>
+    <a href="{{ "http://app.klappater.uahnn.com/?=".$code->code }}">Check-in mit Code {{ $code->code }}</a>
 
     <script type="text/javascript">
         var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -39,7 +39,7 @@
         });
 
         function makeCode() {
-            qrcode.makeCode("{{ $app->make('url')->to('/check-in/'.$code->code) }}");
+            qrcode.makeCode("{{ "http://app.klappater.uahnn.com/?=".$code->code }}");
         }
 
         makeCode();
