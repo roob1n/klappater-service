@@ -33,12 +33,15 @@ Route::post('register/{code}', 'AuthController@register');
 Route::get('profile', 'GuestsController@show');
 
 // SONGS
+Route::options('songs', 'SongsController@options');
 Route::post('songs', 'SongsController@store');
 
 // SUGGEST
+Route::options('votes', 'SuggestionsController@options');
 Route::get('suggestions', 'SuggestionsController@index');
 Route::post('suggestions/{song}', 'SuggestionsController@store');
 Route::delete('suggestions/{suggestion}', 'SuggestionsController@destroy');
 
 // VOTE
+Route::options('votes', 'VotesController@options');
 Route::post('votes/{suggestion}', 'VotesController@toggle');
