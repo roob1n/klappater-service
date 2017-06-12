@@ -35,6 +35,6 @@ class SongsController extends ApiController {
 
     public function options()
     {
-        //
+        return $this->respond("");
     }
 }
