@@ -31,6 +31,9 @@ Route::post('register/{code}', 'AuthController@register');
 
 // USER PROFILE (update, upgrade, etc)
 Route::get('profile', 'GuestsController@show');
+Route::post('profile/name', 'GuestsController@name');
+Route::post('profile/email', 'GuestsController@email');
+Route::put('profile/nickname', 'GuestsController@nickname');
 
 // SONGS
 Route::options('songs', 'SongsController@options');
@@ -45,3 +48,6 @@ Route::delete('suggestions/{suggestion}', 'SuggestionsController@destroy');
 // VOTE
 Route::options('votes', 'VotesController@options');
 Route::post('votes/{suggestion}', 'VotesController@toggle');
+
+// LOCATION
+Route::get('location', 'LocationsController@show');
