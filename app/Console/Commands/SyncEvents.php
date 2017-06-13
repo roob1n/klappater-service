@@ -39,7 +39,10 @@ class SyncEvents extends Command {
 
                 $this->comment($most_voted_sugg->song->title . " gewünscht von " . $most_voted_sugg->guest->nick_name);
 
-                $event->next_pick->addSeconds(round($most_voted_sugg->song->duration_ms / 1000));
+                $event->next_pick = $event->next_pick->addSeconds(round($most_voted_sugg->song->duration_ms / 1000));
+
+                $this->comment($most_voted_sugg->song->duration_ms);
+                $this->comment($event->next_pick);
 
                 $event->save();
                 $most_voted_sugg->save();
