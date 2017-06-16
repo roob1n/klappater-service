@@ -44,6 +44,10 @@
 
         makeCode();
 
+        setTimeout(function(){
+            window.location.reload(1);
+        }, 10000);
+
     </script>
 @else
     <h1>Code für {{ $event->name }}</h1>
